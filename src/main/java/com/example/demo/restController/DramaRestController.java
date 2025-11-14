@@ -1,0 +1,61 @@
+package com.example.demo.restController;
+
+import com.example.demo.dto.DramaDto;
+import com.example.demo.service.DramaService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Objects;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/dramas")
+public class DramaRestController {
+
+    private final DramaService dramaService;
+
+    @GetMapping
+    public ResponseEntity<?> getDramas() {
+        List<DramaDto> dramasDto = dramaService.getDramas();
+        if (dramasDto.size() == 0) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(dramasDto, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getDrama(@PathVariable("id") Long id) {
+        DramaDto dramaDto = dramaService.getDrama(id);
+        if (dramaDto == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(dramaDto);
+    }
+
+    @PostMapping
+    public ResponseEntity<?> addDrama(@RequestBody DramaDto dramaDto) {
+        DramaDto dto = dramaService.addDrama(dramaDto);
+        return new ResponseEntity<>(dto, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateDrama(@PathVariable("id") Long id,
+                                         @RequestBody DramaDto dramaDto) {
+        DramaDto dto = dramaService.updateDrama(dramaDto, id);
+        if (Objects.isNull(dto)) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(dto);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteDrama(@PathVariable("id") Long id) {
+        boolean result = dramaService.deleteDrama(id);
+        if (result) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+}
