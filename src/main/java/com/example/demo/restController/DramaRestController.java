@@ -18,20 +18,20 @@ public class DramaRestController {
 
     @GetMapping
     public ResponseEntity<?> getDramas() {
-        List<DramaDto> dramasDto = dramaService.getDramas();
-        if (dramasDto.size() == 0) {
+        List<DramaDto> dramas = dramaService.getDramas();
+        if (dramas.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(dramasDto, HttpStatus.OK);
+        return new ResponseEntity<>(dramas, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getDrama(@PathVariable("id") Long id) {
-        DramaDto dramaDto = dramaService.getDrama(id);
-        if (dramaDto == null) {
+        DramaDto drama = dramaService.getDrama(id);
+        if (drama == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return ResponseEntity.ok(dramaDto);
+        return ResponseEntity.ok(drama);
     }
 
     @PostMapping
@@ -45,7 +45,7 @@ public class DramaRestController {
                                          @RequestBody DramaDto dramaDto) {
         DramaDto dto = dramaService.updateDrama(dramaDto, id);
         if (Objects.isNull(dto)) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return ResponseEntity.ok(dto);
     }

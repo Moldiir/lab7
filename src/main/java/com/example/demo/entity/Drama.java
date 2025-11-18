@@ -1,25 +1,27 @@
 package com.example.demo.entity;
 
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Entity
+@Table(name = "dramas")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "dramas")
 public class Drama {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 50)
     private String title;
-
     private String genre;
     private Integer episodes;
     private Integer year;
@@ -29,5 +31,14 @@ public class Drama {
     @Column(length = 1000)
     private String description;
 
+    @ManyToMany
+    @JoinTable(
+            name = "drama_actors",
+            joinColumns = @JoinColumn(name = "drama_id"),
+            inverseJoinColumns = @JoinColumn(name = "actor_id")
+    )
+    private List<Actor> actors;
 
+    @OneToMany(mappedBy = "drama", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Award> awards;
 }
