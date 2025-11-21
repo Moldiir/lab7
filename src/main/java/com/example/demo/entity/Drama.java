@@ -39,6 +39,7 @@ public class Drama {
     )
     private List<Actor> actors;
 
-    @OneToMany(mappedBy = "drama", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "drama", cascade = CascadeType.ALL)
     private List<Award> awards;
+
 }

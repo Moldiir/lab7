@@ -16,7 +16,8 @@ public class DramaDto {
     private Integer year;
     private Double rating;
 
-    private List<ActorShortDto> actors; // не показываем biography, popularity
-    private List<AwardDto> awards;      // тоже чистые DTO
+    private List<ActorShortDto> actors;
+    private List<AwardShortDto> awards;
+
 }
 

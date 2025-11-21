@@ -1,8 +1,11 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.dto.DramaDto;
+import com.example.demo.entity.Award;
 import com.example.demo.entity.Drama;
 import com.example.demo.map.DramaMapper;
+import com.example.demo.repository.ActorRepository;
+import com.example.demo.repository.AwardRepository;
 import com.example.demo.repository.DramaRepository;
 import com.example.demo.service.DramaService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +19,8 @@ public class DramaServiceImpl implements DramaService {
 
     private final DramaRepository dramaRepository;
     private final DramaMapper dramaMapper;
+    private final ActorRepository actorRepository;
+    private final AwardRepository awardRepository;
 
     @Override
     public List<DramaDto> getDramas() {
@@ -39,19 +44,44 @@ public class DramaServiceImpl implements DramaService {
         Drama saved = dramaRepository.save(drama);
         return dramaMapper.toDto(saved);
     }
-
     @Override
-    public DramaDto updateDrama(DramaDto dramaDto, Long id) {
+    public DramaDto updateDrama(DramaDto dto, Long id) {
         Drama existing = dramaRepository.findById(id).orElse(null);
         if (existing == null) {
             return null;
         }
 
+        // ----- простые поля -----
+        existing.setTitle(dto.getTitle());
+        existing.setGenre(dto.getGenre());
+        existing.setYear(dto.getYear());
+        existing.setRating(dto.getRating());
 
-        Drama toSave = dramaMapper.toEntity(dramaDto);
-        toSave.setId(id);
+        // ----- АКТЁРЫ -----
+        if (dto.getActors() != null) {
+            var actorIds = dto.getActors().stream()
+                    .map(a -> a.getId())
+                    .toList();
 
-        Drama updated = dramaRepository.save(toSave);
+            existing.setActors(actorRepository.findAllById(actorIds));
+        }
+
+        // ----- НАГРАДЫ -----
+        if (dto.getAwards() != null) {
+            var awardIds = dto.getAwards().stream()
+                    .map(a -> a.getId())
+                    .toList();
+
+            var awards = awardRepository.findAllById(awardIds);
+
+            for (Award award : awards) {
+                award.setDrama(existing);
+            }
+
+            existing.setAwards(awards);
+        }
+
+        Drama updated = dramaRepository.save(existing);
         return dramaMapper.toDto(updated);
     }
 

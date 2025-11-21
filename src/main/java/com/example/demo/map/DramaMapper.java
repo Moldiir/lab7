@@ -7,12 +7,18 @@ import org.mapstruct.Mapping;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring",
-        uses = {ActorMapper.class, AwardMapper.class})
+@Mapper(
+        componentModel = "spring",
+        uses = {ActorMapper.class, AwardMapper.class}
+)
 public interface DramaMapper {
+
 
     DramaDto toDto(Drama drama);
 
+
+    @Mapping(target = "actors", ignore = true)
+    @Mapping(target = "awards", ignore = true)
     Drama toEntity(DramaDto dto);
 
     List<DramaDto> toDtoList(List<Drama> dramas);
